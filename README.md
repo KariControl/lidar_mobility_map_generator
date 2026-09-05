@@ -69,7 +69,7 @@ representative LiDARs, including Hesai, Velodyne, and Livox MID-360.
 
 ![Autoware driving view using the Vector Map](docs/images/autoware_vector_map_driving_rviz2.png)
 
-[Watch the driving video (18 seconds)](docs/videos/autoware_vector_map_driving_rviz2.webm)
+[Watch the driving video (18 seconds)](https://github.com/user-attachments/assets/bb0da7f7-8c39-4d5f-9147-96d45e3e6e5f)
 
 ### Displaying a Navigation Map with Nav2 (MID-360)
 

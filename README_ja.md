@@ -61,7 +61,7 @@ Livox MID-360など、代表的なLiDARのデータで動作を確認してい�
 
 ![ベクターマップを使用したAutoware走行画面](docs/images/autoware_vector_map_driving_rviz2.png)
 
-[走行動画を見る（18秒）](docs/videos/autoware_vector_map_driving_rviz2.webm)
+[走行動画を見る（18秒）](https://github.com/user-attachments/assets/bb0da7f7-8c39-4d5f-9147-96d45e3e6e5f)
 
 ### Nav2でのナビゲーションマップ表示（MID-360）
 
