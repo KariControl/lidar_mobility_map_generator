@@ -208,6 +208,16 @@ class PublicManifestTest(unittest.TestCase):
         self.assertIn("runs-on: ubuntu-24.04", workflow)
         self.assertIn("permissions:\n  contents: read", workflow)
         self.assertIn('LMMG_REQUIRE_WEB_EDITOR_TESTS: "1"', workflow)
+        self.assertNotIn("${{ runner.temp }}", workflow)
+        self.assertIn(
+            'LMMG_RELEASE_WS=$RUNNER_TEMP/lmmg_release_ws', workflow
+        )
+        self.assertIn(
+            'LMMG_PUBLIC_TREE=$RUNNER_TEMP/lmmg_release_ws/src/'
+            'lidar_mobility_map_generator',
+            workflow,
+        )
+        self.assertIn('LMMG_DEMO_ROOT=$RUNNER_TEMP/lmmg_roscon_demo', workflow)
         self.assertIn("persist-credentials: false", workflow)
         self.assertNotIn("pull_request_target:", workflow)
         for action, revision in AUDIT.PUBLIC_GITHUB_ACTION_PINS.items():

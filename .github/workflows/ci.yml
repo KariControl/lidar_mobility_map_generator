@@ -21,9 +21,6 @@ concurrency:
 env:
   ROS_DISTRO: jazzy
   LMMG_PACKAGE: lidar_mobility_map_generator
-  LMMG_RELEASE_WS: ${{ runner.temp }}/lmmg_release_ws
-  LMMG_PUBLIC_TREE: ${{ runner.temp }}/lmmg_release_ws/src/lidar_mobility_map_generator
-  LMMG_DEMO_ROOT: ${{ runner.temp }}/lmmg_roscon_demo
   LMMG_REQUIRE_WEB_EDITOR_TESTS: "1"
 
 jobs:
@@ -40,6 +37,12 @@ jobs:
           fetch-depth: 1
           lfs: false
           submodules: false
+
+      - name: Configure temporary workspace paths
+        run: |
+          echo "LMMG_RELEASE_WS=$RUNNER_TEMP/lmmg_release_ws" >> "$GITHUB_ENV"
+          echo "LMMG_PUBLIC_TREE=$RUNNER_TEMP/lmmg_release_ws/src/lidar_mobility_map_generator" >> "$GITHUB_ENV"
+          echo "LMMG_DEMO_ROOT=$RUNNER_TEMP/lmmg_roscon_demo" >> "$GITHUB_ENV"
 
       - name: Audit source and create isolated public tree
         run: |
