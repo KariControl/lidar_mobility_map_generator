@@ -1,0 +1,43 @@
+review_vector_map:
+  ros__parameters:
+    output_directory: /data/vector_map_output
+
+    # Relabel local generated coordinates as map so the bundled RViz config works
+    # for datasets whose source world frame has another name (for example odom_precision).
+    # Set this to an empty string to preserve the frame stored in review_geometry.tsv.
+    frame_id: map
+
+    publish.pointcloud: true
+    publish.trajectories: true
+    publish.route_graph: true
+    publish.corridors: true
+    publish.lanelet2: true
+    # Dedicated navigation-map review overrides this on; the vector-map
+    # editor overrides it off so unrelated map types are not published.
+    publish.navigation_map: true
+    publish.semantics: true
+    publish.occupancy_grids: true
+    # Classified obstacle points, explicitly observed free cells, and UNKNOWN.
+    publish.diagnostics: true
+    publish.labels: true
+    semantic_auto_reload_period_sec: 1.0
+
+    # Increase the stride or reduce max_points when DDS/RViz memory usage is high.
+    visualization.pointcloud_stride: 1
+    visualization.pointcloud_max_points: 2000000
+    # auto first displays the separately named closed-course Lanelet map.
+    # Other values: closed_course_experimental, validated, generated, canonical.
+    visualization.lanelet2_source: auto
+    # auto tries the closed-course review map, the generated map, and then the
+    # canonical map, in that order.
+    # Other values: closed_course_experimental, generated, canonical.
+    visualization.navigation_map_source: auto
+    visualization.z_offset: 0.05
+    visualization.route_line_width: 0.08
+    visualization.boundary_line_width: 0.04
+    visualization.node_scale: 0.25
+    visualization.arrow_scale: 0.20
+    visualization.label_scale: 0.25
+    visualization.semantic_point_scale: 0.35
+    visualization.semantic_line_width: 0.14
+    visualization.low_confidence_threshold: 0.50

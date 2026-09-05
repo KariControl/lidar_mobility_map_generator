@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="lidar_mobility_map_generator_test" upload="false">
+  <MetaInfo format_version="1.1" map_version="0.7.0"/>
+  <node id="1" visible="true" version="1" lat="0" lon="0">
+    <tag k="local_x" v="0"/><tag k="local_y" v="1"/><tag k="ele" v="0"/>
+  </node>
+  <node id="2" visible="true" version="1" lat="0" lon="0">
+    <tag k="local_x" v="5"/><tag k="local_y" v="1"/><tag k="ele" v="0"/>
+  </node>
+  <node id="3" visible="true" version="1" lat="0" lon="0">
+    <tag k="local_x" v="0"/><tag k="local_y" v="-1"/><tag k="ele" v="0"/>
+  </node>
+  <node id="4" visible="true" version="1" lat="0" lon="0">
+    <tag k="local_x" v="5"/><tag k="local_y" v="-1"/><tag k="ele" v="0"/>
+  </node>
+  <node id="5" visible="true" version="1" lat="0" lon="0">
+    <tag k="local_x" v="0"/><tag k="local_y" v="0"/><tag k="ele" v="0"/>
+  </node>
+  <node id="6" visible="true" version="1" lat="0" lon="0">
+    <tag k="local_x" v="5"/><tag k="local_y" v="0"/><tag k="ele" v="0"/>
+  </node>
+  <node id="7" visible="true" version="1" lat="0" lon="0">
+    <tag k="local_x" v="10"/><tag k="local_y" v="1"/><tag k="ele" v="0"/>
+  </node>
+  <node id="8" visible="true" version="1" lat="0" lon="0">
+    <tag k="local_x" v="10"/><tag k="local_y" v="-1"/><tag k="ele" v="0"/>
+  </node>
+  <node id="9" visible="true" version="1" lat="0" lon="0">
+    <tag k="local_x" v="10"/><tag k="local_y" v="0"/><tag k="ele" v="0"/>
+  </node>
+  <way id="10" visible="true" version="1">
+    <nd ref="1"/><nd ref="2"/>
+    <tag k="type" v="line_thin"/><tag k="subtype" v="solid"/>
+  </way>
+  <way id="11" visible="true" version="1">
+    <nd ref="3"/><nd ref="4"/>
+    <tag k="type" v="line_thin"/><tag k="subtype" v="solid"/>
+  </way>
+  <way id="12" visible="true" version="1">
+    <nd ref="5"/><nd ref="6"/><tag k="type" v="virtual"/>
+  </way>
+  <way id="13" visible="true" version="1">
+    <nd ref="2"/><nd ref="7"/>
+    <tag k="type" v="line_thin"/><tag k="subtype" v="solid"/>
+  </way>
+  <way id="14" visible="true" version="1">
+    <nd ref="4"/><nd ref="8"/>
+    <tag k="type" v="line_thin"/><tag k="subtype" v="solid"/>
+  </way>
+  <way id="15" visible="true" version="1">
+    <nd ref="6"/><nd ref="9"/><tag k="type" v="virtual"/>
+  </way>
+  <relation id="20" visible="true" version="1">
+    <member type="way" ref="10" role="left"/>
+    <member type="way" ref="11" role="right"/>
+    <member type="way" ref="12" role="centerline"/>
+    <tag k="type" v="lanelet"/><tag k="subtype" v="road"/>
+    <tag k="location" v="urban"/><tag k="one_way" v="yes"/>
+    <tag k="participant:vehicle" v="yes"/><tag k="speed_limit" v="18"/>
+    <tag k="generator_speed_limit_mps" v="5"/>
+  </relation>
+  <relation id="21" visible="true" version="1">
+    <member type="way" ref="13" role="left"/>
+    <member type="way" ref="14" role="right"/>
+    <member type="way" ref="15" role="centerline"/>
+    <tag k="type" v="lanelet"/><tag k="subtype" v="road"/>
+    <tag k="location" v="urban"/><tag k="one_way" v="yes"/>
+    <tag k="participant:vehicle" v="yes"/><tag k="speed_limit" v="18"/>
+    <tag k="generator_speed_limit_mps" v="5"/>
+  </relation>
+</osm>

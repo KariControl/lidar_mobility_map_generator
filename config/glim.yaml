@@ -1,0 +1,140 @@
+lidar_mobility_map_generator:
+  ros__parameters:
+    input.type: glim
+
+    # PLY/PCD and traj_lidar.txt (TUM format) exported by GLIM offline_viewer.
+    input.glim.map_path: /data/glim/map.ply
+    input.glim.trajectory_path: /data/glim/traj_lidar.txt
+    input.glim.trajectory_frame: sensor       # sensor | base
+    input.glim.world_frame: map
+
+    # T_base_sensor. Required when trajectory_frame is sensor and LiDAR is offset.
+    extrinsics.source: parameters
+    # Physical-calibration evidence; independent of how the transform is loaded.
+    extrinsics.calibration_source: unknown      # unknown | measured | catalog_estimated | inferred
+    extrinsics.calibration_confidence: unknown  # unknown | low | medium | high
+    extrinsics.verified: false
+    # Deliberately identity until the installation is measured.  Do not mark
+    # it verified merely because a nominal CAD value is available.
+    extrinsics.translation: [0.0, 0.0, 0.0]
+    extrinsics.quaternion_xyzw: [0.0, 0.0, 0.0, 1.0]
+
+    map_builder.voxel_size: 0.08
+    map_builder.minimum_range: 0.5
+    map_builder.maximum_range: 80.0
+    map_builder.minimum_z: -10.0
+    map_builder.maximum_z: 10.0
+    map_builder.minimum_observations_per_voxel: 1
+    map_builder.scan_stride: 1
+    map_builder.point_stride: 1
+
+    trajectory.minimum_translation: 0.03
+    trajectory.maximum_pose_jump: 2.0
+    trajectory.maximum_speed_mps: 20.0
+    trajectory.resample_interval: 0.20
+    # Keep the route on the measured swept body. Unconstrained smoothing may
+    # cut the inside of a turn into UNKNOWN space; nonzero is explicit opt-in.
+    trajectory.smoothing_window: 0.0
+
+    # Use car or small_robot as a template, then override every measured
+    # base_link-relative dimension and set dimensions_verified=true.
+    robot.profile: custom               # custom | small_robot | car | yaris
+    # Autoware uses rear_axle_ground_projection. Keep unspecified until the
+    # physical base_link convention has been identified.
+    # robot.base_reference: unspecified # unspecified | body_center | rear_axle_ground_projection
+    # Override the selected profile with measured values when needed:
+    # robot.footprint_model: circle      # circle | rectangle
+    # robot.width: 0.70
+    # robot.front_extent: 0.35
+    # robot.rear_extent: 0.35
+    # robot.clearance_margin: 0.15
+    # robot.minimum_collision_height: 0.08
+    # robot.maximum_collision_height: 2.0
+    # robot.dimensions_source: unknown      # unknown | measured | catalog_estimated | inferred
+    # robot.dimensions_confidence: unknown  # unknown | low | medium | high
+    # robot.minimum_turning_radius: 0.0
+    # robot.allow_in_place_rotation: true
+    # robot.allow_reverse_motion: true
+    # robot.dimensions_verified: false
+
+    traversability.grid_resolution: 0.10
+    traversability.trajectory_crop_radius: 6.0
+    traversability.ground_estimation_radius: 1.0
+    traversability.ground_quantile: 0.15
+    traversability.minimum_ground_points: 6
+    traversability.ground_search_min_offset: -2.0
+    traversability.ground_search_max_offset: 0.5
+    traversability.fallback_ground_z_offset: -0.30
+    traversability.minimum_obstacle_height: 0.08
+    traversability.maximum_obstacle_height: 2.0
+    # Set only when each recorded pose disk is trusted as free space; disks are
+    # stamped discretely without segment interpolation. Zero disables it.
+    traversability.observed_trajectory_clearance_radius: 0.0
+    # FREE evidence is never inferred from an absence of returns. Ground mode
+    # accepts only direct, locally supported ground-return cells.
+    traversability.free_space_evidence_mode: trajectory  # none | trajectory | ground_observations | combined
+    traversability.minimum_ground_free_points_per_cell: 1
+    traversability.maximum_ground_free_height: 0.08
+    traversability.trajectory_free_space_model: disk  # disk | footprint
+    traversability.trajectory_footprint_erosion_margin: 0.0
+    traversability.maximum_corridor_half_width: 3.0
+    traversability.ray_step: 0.05
+    traversability.boundary_margin: 0.05
+    traversability.minimum_safe_center_width: 0.20
+    traversability.maximum_grid_cells: 50000000
+    traversability.ground_cell_resolution: 0.50
+    traversability.minimum_ground_points_per_cell: 3
+    traversability.ground_plane_radius: 1.50
+    traversability.minimum_ground_cells_for_plane: 3
+    traversability.maximum_ground_slope: 0.35
+    traversability.maximum_ground_plane_residual: 0.12
+    traversability.minimum_obstacle_points_per_cell: 2
+    traversability.obstacle_support_radius_cells: 1
+    traversability.minimum_obstacle_neighbor_points: 3
+    # A completed GLIM map does not retain per-scan observation history, so
+    # this value must remain 1.
+    traversability.minimum_obstacle_observations: 1
+    traversability.unknown_space_policy: occupied  # occupied | allow
+    traversability.maximum_clearance_slope: 1.0
+
+    topology.node_merge_distance: 0.45
+    topology.intersection_merge_distance: 0.30
+    topology.same_path_heading_threshold_deg: 25.0
+    topology.intersection_heading_threshold_deg: 50.0
+    topology.minimum_loop_separation: 2.0
+    topology.minimum_edge_length: 0.50
+    # Finer validation isolates local obstacle/UNKNOWN failures instead of
+    # discarding an otherwise usable 20 m route section as one unit.
+    topology.maximum_edge_length: 20.0
+    topology.geometry_smoothing_window: 1.0
+    topology.edge_split_heading_change_deg: 75.0
+    topology.cusp_heading_change_deg: 120.0
+    topology.generate_reverse_edges: false
+
+    lanelet2.subtype: road
+    lanelet2.location: urban
+    lanelet2.participant: vehicle
+    lanelet2.boundary_type: virtual
+    lanelet2.boundary_subtype: ""
+    lanelet2.one_way: true
+    lanelet2.speed_limit_mps: 1.0
+    lanelet2.terminal_localization_settling_verified: false
+
+    output.directory: /data/vector_map_output
+    # Select the map type to generate. Use `both` only when both maps use the
+    # same platform dimensions and coordinate reference.
+    output.target_mode: vector_map  # vector_map | navigation_map | both
+    # Exported local Cartesian products are consistently labelled `map` even
+    # when the SLAM input used an estimator-specific world-frame name.
+    output.frame_id: map
+    output.save_pointcloud_map: true
+    output.save_debug_grids: true
+    output.save_lanelet2: true
+    # Leave these confirmation flags false until the corresponding free-space
+    # or boundary information has been reviewed for this exact data set.
+    output.nav2_free_space_verified: false
+    output.lanelet2_physical_boundaries_verified: false
+    # Retained for configuration compatibility. Nav2 output keeps every source
+    # vertex and does not use this value to simplify the recorded route.
+    output.nav2_route_max_chord_error: 0.10
+    output.nav2_route_max_segment_length: 2.0

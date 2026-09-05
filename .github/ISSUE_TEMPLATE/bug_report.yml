@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible problem without publishing sensitive map data
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a problem. Do not attach private point clouds,
+        rosbag files, exact site coordinates, vehicle registrations, faces,
+        credentials, or security-vulnerability details. Follow SECURITY.md for
+        vulnerabilities.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Provide the release version or full commit SHA.
+      placeholder: v0.11.0
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include the OS, ROS distribution, input type, and relevant dependency versions.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Use synthetic or redacted data and list the smallest sequence that reproduces the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Redacted logs
+      description: Remove private paths, coordinates, credentials, and identifying data before pasting logs.
+      render: shell
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed private point cloud, site, vehicle, personal, and credential data from this report.
+          required: true

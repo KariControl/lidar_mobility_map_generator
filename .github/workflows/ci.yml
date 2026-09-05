@@ -1,0 +1,83 @@
+name: ROS 2 Jazzy CI
+
+on:
+  push:
+    branches:
+      - main
+      - DEVELOP
+  pull_request:
+    branches:
+      - main
+      - DEVELOP
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ROS_DISTRO: jazzy
+  LMMG_PACKAGE: lidar_mobility_map_generator
+  LMMG_RELEASE_WS: ${{ runner.temp }}/lmmg_release_ws
+  LMMG_PUBLIC_TREE: ${{ runner.temp }}/lmmg_release_ws/src/lidar_mobility_map_generator
+  LMMG_DEMO_ROOT: ${{ runner.temp }}/lmmg_roscon_demo
+  LMMG_REQUIRE_WEB_EDITOR_TESTS: "1"
+
+jobs:
+  public-release-gate:
+    name: Public release gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          lfs: false
+          submodules: false
+
+      - name: Audit source and create isolated public tree
+        run: |
+          python3 tools/audit_public_release.py --mode source "$GITHUB_WORKSPACE"
+          test ! -e "$LMMG_PUBLIC_TREE"
+          mkdir -p "$LMMG_RELEASE_WS/src"
+          python3 tools/create_public_release_tree.py \
+            "$GITHUB_WORKSPACE" "$LMMG_PUBLIC_TREE" \
+            --json-output "$RUNNER_TEMP/lmmg-public-tree-audit.json"
+          python3 "$LMMG_PUBLIC_TREE/tools/audit_public_release.py" \
+            --mode tree "$LMMG_PUBLIC_TREE"
+
+      - name: Set up ROS build tooling
+        uses: ros-tooling/setup-ros@649ef6bcd696da05bc27ceb3fab69d810c0daeab # 0.7.19
+
+      - name: Install and verify declared dependencies
+        run: |
+          rosdep update
+          rosdep install --from-paths "$LMMG_PUBLIC_TREE" \
+            --ignore-src --rosdistro "$ROS_DISTRO" -y
+          rosdep check --from-paths "$LMMG_PUBLIC_TREE" \
+            --ignore-src --rosdistro "$ROS_DISTRO"
+
+      - name: Build and test isolated public tree
+        run: |
+          source "/opt/ros/$ROS_DISTRO/setup.bash"
+          cd "$LMMG_RELEASE_WS"
+          colcon build --symlink-install \
+            --packages-select "$LMMG_PACKAGE" \
+            --event-handlers console_direct+
+          colcon test --return-code-on-test-failure \
+            --packages-select "$LMMG_PACKAGE" \
+            --event-handlers console_direct+
+          colcon test-result --verbose
+
+      - name: Run deterministic generated-map demo
+        run: |
+          source "/opt/ros/$ROS_DISTRO/setup.bash"
+          source "$LMMG_RELEASE_WS/install/setup.bash"
+          bash "$LMMG_PUBLIC_TREE/scripts/run_roscon_demo.sh" \
+            "$LMMG_DEMO_ROOT" generate

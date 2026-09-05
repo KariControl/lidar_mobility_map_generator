@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/KariControl/lidar_mobility_map_generator/security/policy
+    about: Follow the private reporting instructions and do not disclose vulnerability details in an issue.
